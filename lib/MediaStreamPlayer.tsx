@@ -9,11 +9,24 @@ import { Player } from './Player'
  */
 
 export class MediaStreamPlayer extends HTMLElement {
+  private _setState?: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: string
+    }>
+  >
+
+  public attributeChangeSubscriber(
+    cb: React.Dispatch<
+      React.SetStateAction<{
+        [key: string]: string
+      }>
+    >,
+  ) {
+    this._setState = cb
+  }
+
   constructor() {
     super()
-    this.setState = () => {
-      /** this is empty on purpose */
-    }
   }
 
   static get observedAttributes() {
@@ -50,7 +63,16 @@ export class MediaStreamPlayer extends HTMLElement {
         mode: 'no-cors',
       })
       .then(() => {
-        ReactDOM.render(<PlayerComponent ob={this} />, this)
+        ReactDOM.render(
+          <PlayerComponent
+            subscribeAttributesChanged={this.attributeChangeSubscriber}
+            initialAttributes={{
+              hostname: this.hostname,
+              autoplay: this.autoplay,
+            }}
+          />,
+          this,
+        )
       })
       .catch((err) => {
         console.error(`Authorization failed: ${err.message}`)
@@ -61,38 +83,40 @@ export class MediaStreamPlayer extends HTMLElement {
     ReactDOM.unmountComponentAtNode(this)
   }
 
-  public setState: React.Dispatch<
-    React.SetStateAction<{
-      [key: string]: string
-    }>
-  >
-
   attributeChangedCallback(attrName: string, _: string, value: string) {
-    /* if (attrName === 'hostname' || attrName === 'autoplay') {
-      // cleanup previous
-      // Provide default authentication
-    } */
-    console.log(attrName)
-    this.setState((oldState) => ({ ...oldState, [attrName]: value }))
+    if (this._setState === undefined) {
+      console.warn(`ignored attribute change: ${attrName}=${value}`)
+      return
+    }
+    this._setState((oldState) => ({ ...oldState, [attrName]: value }))
   }
 }
 
 interface PlayerComponentProps {
-  ob: {
-    setState: React.Dispatch<
+  readonly initialAttributes: {
+    readonly hostname: string
+    readonly autoplay: string
+  }
+  readonly subscribeAttributesChanged: (
+    cb: React.Dispatch<
       React.SetStateAction<{
         [key: string]: string
       }>
-    >
-  }
+    >,
+  ) => void
 }
 
-const PlayerComponent: React.FC<PlayerComponentProps> = ({ ob }) => {
-  const [state, setState] = useState<{ [key: string]: string }>({})
+const PlayerComponent: React.FC<PlayerComponentProps> = ({
+  subscribeAttributesChanged,
+  initialAttributes,
+}) => {
+  const [state, setState] = useState<{ [key: string]: string }>(
+    initialAttributes,
+  )
 
   useEffect(() => {
-    ob.setState = setState
-  }, [])
+    subscribeAttributesChanged(setState)
+  }, [subscribeAttributesChanged])
 
   const { hostname, autoplay } = state
 
