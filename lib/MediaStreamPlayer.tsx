@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { Player } from './Player'
 
@@ -9,8 +9,15 @@ import { Player } from './Player'
  */
 
 export class MediaStreamPlayer extends HTMLElement {
+  constructor() {
+    super()
+    this.setState = () => {
+      /** this is empty on purpose */
+    }
+  }
+
   static get observedAttributes() {
-    return ['hostname']
+    return ['hostname', 'autoplay']
   }
 
   get hostname() {
@@ -21,33 +28,73 @@ export class MediaStreamPlayer extends HTMLElement {
     this.setAttribute('hostname', value)
   }
 
+  get autoplay() {
+    return this.getAttribute('autoplay') ?? 'false'
+  }
+
+  set autoplay(value: string) {
+    this.setAttribute('autoplay', value)
+  }
+
+  /* createPlayer() {
+    const { autoplay, hostname } = this
+
+    return <Player hostname={hostname} autoPlay={Boolean(autoplay)} />
+  } */
+
   connectedCallback() {
-    /**
-     */
+    console.log(this.hostname)
+    window
+      .fetch(`http://${this.hostname}/axis-cgi/usergroup.cgi`, {
+        credentials: 'include',
+        mode: 'no-cors',
+      })
+      .then(() => {
+        ReactDOM.render(<PlayerComponent ob={this} />, this)
+      })
+      .catch((err) => {
+        console.error(`Authorization failed: ${err.message}`)
+      })
   }
 
   disconnectedCallback() {
-    /**
-     */
+    ReactDOM.unmountComponentAtNode(this)
   }
 
-  attributeChangedCallback(attrName: string, _: string, hostname: string) {
-    if (attrName === 'hostname') {
+  public setState: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: string
+    }>
+  >
+
+  attributeChangedCallback(attrName: string, _: string, value: string) {
+    /* if (attrName === 'hostname' || attrName === 'autoplay') {
       // cleanup previous
-      ReactDOM.unmountComponentAtNode(this)
-
       // Provide default authentication
-      window
-        .fetch(`http://${hostname}/axis-cgi/usergroup.cgi`, {
-          credentials: 'include',
-          mode: 'no-cors',
-        })
-        .then(() => {
-          ReactDOM.render(<Player hostname={hostname} />, this)
-        })
-        .catch((err) => {
-          console.error(`Authorization failed: ${err.message}`)
-        })
-    }
+    } */
+    console.log(attrName)
+    this.setState((oldState) => ({ ...oldState, [attrName]: value }))
   }
+}
+
+interface PlayerComponentProps {
+  ob: {
+    setState: React.Dispatch<
+      React.SetStateAction<{
+        [key: string]: string
+      }>
+    >
+  }
+}
+
+const PlayerComponent: React.FC<PlayerComponentProps> = ({ ob }) => {
+  const [state, setState] = useState<{ [key: string]: string }>({})
+
+  useEffect(() => {
+    ob.setState = setState
+  }, [])
+
+  const { hostname, autoplay } = state
+
+  return <Player hostname={hostname} autoPlay={Boolean(autoplay)} />
 }
