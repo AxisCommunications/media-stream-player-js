@@ -7,6 +7,8 @@ import React, {
   useLayoutEffect,
   useRef,
 } from 'react'
+import styled from 'styled-components'
+import { Sdp } from 'media-stream-library/dist/esm/utils/protocols'
 
 import { Container, Layer } from './Container'
 import {
@@ -18,12 +20,10 @@ import {
 } from './PlaybackArea'
 import { Controls } from './Controls'
 import { Feedback } from './Feedback'
-import { Sdp } from 'media-stream-library/dist/esm/utils/protocols'
 import { Stats } from './Stats'
 import { useSwitch } from './hooks/useSwitch'
 import { getImageURL } from './utils'
 import { MetadataHandler } from './metadata'
-import styled from 'styled-components'
 
 const DEFAULT_API_TYPE = AXIS_IMAGE_CGI
 
@@ -310,18 +310,6 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
               <Feedback waiting={waiting} />
             </Layer>
             <Layer>
-              {showStatsOverlay && videoProperties !== undefined ? (
-                <Stats
-                  api={api}
-                  parameters={parameters}
-                  videoProperties={videoProperties}
-                  host={host}
-                  open={showStatsOverlay}
-                  refresh={refresh}
-                />
-              ) : null}
-            </Layer>
-            <Layer>
               <Controls
                 play={play}
                 src={host}
@@ -330,7 +318,6 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
                 onStop={onStop}
                 onRefresh={onRefresh}
                 onScreenshot={onScreenshot}
-                format={format}
                 onFormat={onFormat}
                 onVapix={onVapix}
                 labels={{
@@ -343,8 +330,17 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
                 }}
                 showStatsOverlay={showStatsOverlay}
                 toggleStats={toggleStatsOverlay}
+                api={api}
               />
             </Layer>
+            {showStatsOverlay && videoProperties !== undefined ? (
+              <Stats
+                api={api}
+                parameters={parameters}
+                videoProperties={videoProperties}
+                refresh={refresh}
+              />
+            ) : null}
           </Container>
         </Limiter>
       </MediaStreamPlayerContainer>

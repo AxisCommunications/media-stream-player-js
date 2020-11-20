@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import debug from 'debug'
-
 import { Sdp } from 'media-stream-library/dist/esm/utils/protocols'
 import { pipelines, utils } from 'media-stream-library/dist/esm/index.browser'
 
@@ -100,25 +99,26 @@ export const WsRtspVideo: React.FC<WsRtspVideoProps> = ({
       return
     }
 
-    if (play && canplay && !playing) {
+    if (play && canplay === true && playing === false) {
       debugLog('play')
       videoEl.play().catch((err) => {
         console.error('VideoElement error: ', err.message)
       })
-    } else if (!play && playing) {
+    } else if (!play && playing === true) {
       debugLog('pause')
       videoEl.pause()
       unsetPlaying()
-    } else if (play && playing) {
+    } else if (play && playing === true) {
       if (__onPlayingRef.current !== undefined) {
         __onPlayingRef.current({
           el: videoEl,
+          pipeline: pipeline ?? undefined,
           width: videoEl.videoWidth,
           height: videoEl.videoHeight,
         })
       }
     }
-  }, [play, canplay, playing, unsetPlaying])
+  }, [play, canplay, playing, unsetPlaying, pipeline])
 
   // keep a stable reference to the external metadatahandler
   const __metadataHandlerRef = useRef(metadataHandler)
