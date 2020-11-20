@@ -1,5 +1,5 @@
 import React, { Ref } from 'react'
-import { Sdp } from 'media-stream-library/lib/utils/protocols/sdp'
+import { Sdp, pipelines } from 'media-stream-library/dist/esm/index.browser'
 import debug from 'debug'
 
 import { PlayerNativeElement } from './Player'
@@ -15,13 +15,14 @@ const AXIS_VIDEO_CGI = 'mjpg'
 export const AXIS_MEDIA_AMP = 'media'
 
 export interface VapixParameters {
-  [key: string]: string
+  readonly [key: string]: string
 }
 
 export interface VideoProperties {
   readonly el: PlayerNativeElement
   readonly width: number
   readonly height: number
+  readonly pipeline?: pipelines.Html5VideoPipeline
   readonly media?: ReadonlyArray<{
     readonly type: 'video' | 'audio' | 'data'
     readonly mime: string
@@ -29,16 +30,16 @@ export interface VideoProperties {
 }
 
 interface PlaybackAreaProps {
-  forwardedRef?: Ref<PlayerNativeElement>
-  host: string
-  api: string
-  parameters?: VapixParameters
-  play?: boolean
-  refresh: number
-  onPlaying: (properties: VideoProperties) => void
-  onSdp?: (msg: Sdp) => void
-  metadataHandler?: MetadataHandler
-  secure?: boolean
+  readonly forwardedRef?: Ref<PlayerNativeElement>
+  readonly host: string
+  readonly api: string
+  readonly parameters?: VapixParameters
+  readonly play?: boolean
+  readonly refresh: number
+  readonly onPlaying: (properties: VideoProperties) => void
+  readonly onSdp?: (msg: Sdp) => void
+  readonly metadataHandler?: MetadataHandler
+  readonly secure?: boolean
 }
 
 const API_TYPES = new Set([AXIS_IMAGE_CGI, AXIS_VIDEO_CGI, AXIS_MEDIA_AMP])
@@ -53,7 +54,7 @@ const AXIS_API = {
 
 const DEFAULT_VIDEO_CODEC = 'h264'
 
-const wsUri = (host: string, secure?: boolean) => {
+const wsUri = (host: string, secure = false) => {
   if (host.length === 0) {
     return ''
   }
@@ -73,7 +74,7 @@ const rtspUri = (host: string, searchParams: string) => {
     : ''
 }
 
-const imgUri = (host: string, searchParams: string, secure?: boolean) => {
+const imgUri = (host: string, searchParams: string, secure = false) => {
   if (host.length === 0) {
     return ''
   }
@@ -171,7 +172,7 @@ export const PlaybackArea: React.FC<PlaybackAreaProps> = ({
   })
 
   switch (api) {
-    case AXIS_MEDIA_AMP:
+    case AXIS_MEDIA_AMP: {
       const ws = wsUri(host, secure)
       const rtsp = rtspUri(host, searchParams)
       const videocodec = parameters.videocodec || DEFAULT_VIDEO_CODEC
@@ -203,7 +204,8 @@ export const PlaybackArea: React.FC<PlaybackAreaProps> = ({
         default:
           return null
       }
-    case AXIS_IMAGE_CGI:
+    }
+    case AXIS_IMAGE_CGI: {
       const src = imgUri(host, searchParams, secure)
       return (
         <StillImage
@@ -212,6 +214,7 @@ export const PlaybackArea: React.FC<PlaybackAreaProps> = ({
           {...{ src, play, onPlaying }}
         />
       )
+    }
     case AXIS_VIDEO_CGI:
       console.warn(`if you want to use motion JPEG, use type '${AXIS_MEDIA_AMP}'
 with videocodec=jpeg instead of type '${AXIS_VIDEO_CGI}'`)

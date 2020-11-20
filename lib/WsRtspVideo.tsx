@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import debug from 'debug'
-
 import { Sdp } from 'media-stream-library/dist/esm/utils/protocols'
 import { pipelines, utils } from 'media-stream-library/dist/esm/index.browser'
 
-import useEventState from './hooks/useEventState'
+import { useEventState } from './hooks/useEventState'
 import { VideoProperties } from './PlaybackArea'
 import {
   attachMetadataHandler,
@@ -26,38 +25,38 @@ const VideoNative = styled.video`
  */
 
 interface WsRtspVideoProps {
-  forwardedRef?: React.Ref<HTMLVideoElement>
+  readonly forwardedRef?: React.Ref<HTMLVideoElement>
   /**
    * The _intended_ playback state.
    */
-  play?: boolean
+  readonly play?: boolean
   /**
    * The source URI for the WebSocket server.
    */
-  ws?: string
+  readonly ws?: string
   /**
    * The RTSP URI.
    */
-  rtsp?: string
+  readonly rtsp?: string
   /**
    * Activate automatic playback.
    */
-  autoPlay?: boolean
+  readonly autoPlay?: boolean
   /**
    * Default mute state.
    */
-  muted?: boolean
+  readonly muted?: boolean
   /**
    * Callback to signal video is playing.
    */
-  onPlaying: (videoProperties: VideoProperties) => void
-  onSdp?: (msg: Sdp) => void
-  metadataHandler?: MetadataHandler
+  readonly onPlaying?: (videoProperties: VideoProperties) => void
+  readonly onSdp?: (msg: Sdp) => void
+  readonly metadataHandler?: MetadataHandler
 }
 
 export const WsRtspVideo: React.FC<WsRtspVideoProps> = ({
   forwardedRef,
-  play,
+  play = false,
   ws,
   rtsp,
   autoPlay = true,
@@ -89,6 +88,10 @@ export const WsRtspVideo: React.FC<WsRtspVideoProps> = ({
   )
   const [fetching, setFetching] = useState(false)
 
+  // keep a stable reference to the external onPlaying callback
+  const __onPlayingRef = useRef(onPlaying)
+  __onPlayingRef.current = onPlaying
+
   useEffect(() => {
     const videoEl = videoRef.current
 
@@ -96,44 +99,60 @@ export const WsRtspVideo: React.FC<WsRtspVideoProps> = ({
       return
     }
 
-    if (play && canplay && !playing) {
+    if (play && canplay === true && playing === false) {
       debugLog('play')
       videoEl.play().catch((err) => {
         console.error('VideoElement error: ', err.message)
       })
-    } else if (!play && playing) {
+    } else if (!play && playing === true) {
       debugLog('pause')
       videoEl.pause()
       unsetPlaying()
-    } else if (play && playing) {
-      onPlaying({
-        el: videoEl,
-        width: videoEl.videoWidth,
-        height: videoEl.videoHeight,
-      })
+    } else if (play && playing === true) {
+      if (__onPlayingRef.current !== undefined) {
+        __onPlayingRef.current({
+          el: videoEl,
+          pipeline: pipeline ?? undefined,
+          width: videoEl.videoWidth,
+          height: videoEl.videoHeight,
+        })
+      }
     }
-  }, [play, canplay, playing])
+  }, [play, canplay, playing, unsetPlaying, pipeline])
+
+  // keep a stable reference to the external metadatahandler
+  const __metadataHandlerRef = useRef(metadataHandler)
+  __metadataHandlerRef.current = metadataHandler
 
   useEffect(() => {
     const videoEl = videoRef.current
 
-    if (ws && rtsp && videoEl) {
+    if (
+      ws !== undefined &&
+      ws.length > 0 &&
+      rtsp !== undefined &&
+      rtsp.length > 0 &&
+      videoEl !== null
+    ) {
       debugLog('create pipeline', ws, rtsp)
-      const pipeline = new pipelines.Html5VideoPipeline({
+      const newPipeline = new pipelines.Html5VideoPipeline({
         ws: { uri: ws },
         rtsp: { uri: rtsp },
         mediaElement: videoEl,
       })
-      setPipeline(pipeline)
+      setPipeline(newPipeline)
 
       let scheduler: utils.Scheduler<ScheduledMessage> | undefined
-      if (metadataHandler !== undefined) {
-        scheduler = attachMetadataHandler(pipeline, metadataHandler)
+      if (__metadataHandlerRef.current !== undefined) {
+        scheduler = attachMetadataHandler(
+          newPipeline,
+          __metadataHandlerRef.current,
+        )
       }
 
       return () => {
         debugLog('close pipeline and clear video')
-        pipeline.close()
+        newPipeline.close()
         videoEl.src = ''
         scheduler?.reset()
         setPipeline(null)
@@ -142,7 +161,7 @@ export const WsRtspVideo: React.FC<WsRtspVideoProps> = ({
         unsetPlaying()
       }
     }
-  }, [ws, rtsp])
+  }, [ws, rtsp, unsetCanplay, unsetPlaying])
 
   // keep a stable reference to the external SDP handler
   const __onSdpRef = useRef(onSdp)
@@ -150,14 +169,18 @@ export const WsRtspVideo: React.FC<WsRtspVideoProps> = ({
 
   useEffect(() => {
     if (play && pipeline && !fetching) {
-      pipeline.ready.then(() => {
-        pipeline.onSdp = (sdp) => {
-          if (__onSdpRef.current !== undefined) {
-            __onSdpRef.current(sdp)
+      pipeline.ready
+        .then(() => {
+          pipeline.onSdp = (sdp) => {
+            if (__onSdpRef.current !== undefined) {
+              __onSdpRef.current(sdp)
+            }
           }
-        }
-        pipeline.rtsp.play()
-      })
+          pipeline.rtsp.play()
+        })
+        .catch((err) => {
+          console.error(err)
+        })
       debugLog('initiated data fetching')
       setFetching(true)
     }

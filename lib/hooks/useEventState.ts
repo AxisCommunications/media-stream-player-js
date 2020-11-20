@@ -1,4 +1,4 @@
-import { RefObject, useState, useEffect } from 'react'
+import { RefObject, useState, useEffect, useCallback } from 'react'
 
 /**
  * Use a state set by an event:
@@ -9,14 +9,14 @@ import { RefObject, useState, useEffect } from 'react'
  * @param {String} eventName The name of the event setting the state to true
  * @return {Array} The boolean state and a function to switch state to false
  */
-const useEventState = (
+export const useEventState = (
   ref: RefObject<HTMLElement>,
   eventName: string,
-): [boolean, () => void] => {
+): readonly [boolean, () => void] => {
   const [eventState, setEventState] = useState(false)
 
-  const setEventStateTrue = () => setEventState(true)
-  const setEventStateFalse = () => setEventState(false)
+  const setEventStateTrue = useCallback(() => setEventState(true), [])
+  const setEventStateFalse = useCallback(() => setEventState(false), [])
 
   useEffect(() => {
     const el = ref.current
@@ -27,9 +27,7 @@ const useEventState = (
         el.removeEventListener(eventName, setEventStateTrue)
       }
     }
-  }, [eventState])
+  }, [eventState, eventName, ref, setEventStateTrue])
 
   return [eventState, setEventStateFalse]
 }
-
-export default useEventState

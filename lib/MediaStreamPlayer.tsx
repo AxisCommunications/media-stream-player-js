@@ -11,6 +11,16 @@ interface InitialAttributes {
   readonly resolution: string
   readonly rotation: string
   readonly camera: string
+  readonly fps: string
+  readonly audio: string
+  readonly clock: string
+  readonly date: string
+  readonly text: string
+  readonly textstring: string
+  readonly textcolor: string
+  readonly textbackgroundcolor: string
+  readonly textpos: string
+  readonly secure: boolean
 }
 
 type SetStateType = React.Dispatch<React.SetStateAction<InitialAttributes>>
@@ -27,27 +37,83 @@ export class MediaStreamPlayer extends HTMLElement {
     this._setState = cb
   }
 
-  constructor() {
-    super()
+  public static get observedAttributes() {
+    return [
+      'hostname',
+      'autoplay',
+      'format',
+      'compression',
+      'resolution',
+      'rotation',
+      'camera',
+      'fps',
+      'audio',
+      'clock',
+      'date',
+      'text',
+      'textstring',
+      'textcolor',
+      'textbackgroundcolor',
+      'textpos',
+      'secure',
+    ]
   }
 
-  static get observedAttributes() {
-    return ['hostname', 'autoplay', 'format']
+  private get allAttributes() {
+    const {
+      hostname,
+      autoplay,
+      format,
+      compression,
+      resolution,
+      rotation,
+      camera,
+      fps,
+      audio,
+      clock,
+      date,
+      text,
+      textstring,
+      textcolor,
+      textbackgroundcolor,
+      textpos,
+      secure,
+    } = this
+
+    return {
+      hostname,
+      autoplay,
+      format,
+      compression,
+      resolution,
+      rotation,
+      camera,
+      fps,
+      audio,
+      clock,
+      date,
+      text,
+      textstring,
+      textcolor,
+      textbackgroundcolor,
+      textpos,
+      secure,
+    }
   }
 
-  get hostname() {
+  public get hostname() {
     return this.getAttribute('hostname') ?? ''
   }
 
-  set hostname(value: string) {
+  public set hostname(value: string) {
     this.setAttribute('hostname', value)
   }
 
-  get autoplay() {
+  public get autoplay() {
     return this.hasAttribute('autoplay')
   }
 
-  set autoplay(value) {
+  public set autoplay(value) {
     if (value !== undefined) {
       this.setAttribute('autoplay', '')
     } else {
@@ -55,11 +121,11 @@ export class MediaStreamPlayer extends HTMLElement {
     }
   }
 
-  get format() {
+  public get format() {
     return this.getAttribute('format') ?? 'JPEG'
   }
 
-  set format(value: string) {
+  public set format(value: string) {
     this.setAttribute('format', value)
   }
 
@@ -95,36 +161,110 @@ export class MediaStreamPlayer extends HTMLElement {
     this.setAttribute('camera', value)
   }
 
-  connectedCallback() {
+  public get fps() {
+    return this.getAttribute('fps') ?? ''
+  }
+
+  public set fps(value: string) {
+    this.setAttribute('fps', value)
+  }
+
+  public get audio() {
+    return this.getAttribute('audio') ?? ''
+  }
+
+  public set audio(value: string) {
+    this.setAttribute('audio', value)
+  }
+
+  public get clock() {
+    return this.getAttribute('clock') ?? ''
+  }
+
+  public set clock(value: string) {
+    this.setAttribute('clock', value)
+  }
+
+  public get date() {
+    return this.getAttribute('date') ?? ''
+  }
+
+  public set date(value: string) {
+    this.setAttribute('date', value)
+  }
+
+  public get text() {
+    return this.getAttribute('text') ?? ''
+  }
+
+  public set text(value: string) {
+    this.setAttribute('text', value)
+  }
+
+  public get textstring() {
+    return this.getAttribute('textstring') ?? ''
+  }
+
+  public set textstring(value: string) {
+    this.setAttribute('textstring', value)
+  }
+
+  public get textcolor() {
+    return this.getAttribute('textcolor') ?? ''
+  }
+
+  public set textcolor(value: string) {
+    this.setAttribute('textcolor', value)
+  }
+
+  public get textbackgroundcolor() {
+    return this.getAttribute('textbackgroundcolor') ?? ''
+  }
+
+  public set textbackgroundcolor(value: string) {
+    this.setAttribute('textbackgroundcolor', value)
+  }
+
+  public get textpos() {
+    return this.getAttribute('textpos') ?? ''
+  }
+
+  public set textpos(value: string) {
+    this.setAttribute('textpos', value)
+  }
+
+  public get secure() {
+    return this.hasAttribute('secure')
+  }
+
+  public set secure(value) {
+    if (value !== undefined) {
+      this.setAttribute('secure', '')
+    } else {
+      this.removeAttribute('secure')
+    }
+  }
+
+  public connectedCallback() {
+    const userGroupUrl = new URL(
+      `http://${this.hostname}/axis-cgi/usergroup.cgi`,
+    )
+    userGroupUrl.protocol = this.secure === true ? 'https' : 'http'
+
     window
-      .fetch(`http://${this.hostname}/axis-cgi/usergroup.cgi`, {
+      .fetch(userGroupUrl.href, {
         credentials: 'include',
         mode: 'no-cors',
       })
       .then(() => {
-        const {
-          hostname,
-          autoplay,
-          format,
-          compression,
-          resolution,
-          rotation,
-          camera,
-        } = this
-
         ReactDOM.render(
           <PlayerComponent
+            // eslint-disable-next-line react/jsx-no-bind
             subscribeAttributesChanged={(cb) =>
               this.attributeChangeSubscriber(cb)
             }
             initialAttributes={{
-              hostname,
-              autoplay,
-              format,
-              compression,
-              resolution,
-              rotation,
-              camera,
+              ...this.allAttributes,
             }}
           />,
           this,
@@ -135,34 +275,18 @@ export class MediaStreamPlayer extends HTMLElement {
       })
   }
 
-  disconnectedCallback() {
+  public disconnectedCallback() {
     ReactDOM.unmountComponentAtNode(this)
   }
 
-  attributeChangedCallback(attrName: string, _: string, value: string) {
+  public attributeChangedCallback(attrName: string, _: string, value: string) {
     if (this._setState === undefined) {
       console.warn(`ignored attribute change: ${attrName}=${value}`)
       return
     }
 
-    const {
-      hostname,
-      autoplay,
-      format,
-      compression,
-      resolution,
-      rotation,
-      camera,
-    } = this
-
     this._setState({
-      hostname,
-      autoplay,
-      format,
-      compression,
-      resolution,
-      rotation,
-      camera,
+      ...this.allAttributes,
     })
   }
 }
@@ -190,29 +314,55 @@ const PlayerComponent: React.FC<PlayerComponentProps> = ({
     resolution,
     rotation,
     camera,
+    fps,
+    audio,
+    clock,
+    date,
+    text,
+    textstring,
+    textcolor,
+    textbackgroundcolor,
+    textpos,
+    secure,
   } = state
 
   const vapixParameters = useMemo(() => {
-    const params: VapixParameters = {}
+    const params = [
+      { compression },
+      { resolution },
+      { rotation },
+      { camera },
+      { fps },
+      { audio },
+      { clock },
+      { date },
+      { text },
+      { textstring },
+      { textcolor },
+      { textbackgroundcolor },
+      { textpos },
+    ]
+      .filter((item) => Object.values(item)[0] !== '')
+      .map((item) => {
+        return { [Object.keys(item)[0]]: Object.values(item)[0] ?? '' }
+      })
 
-    if (compression !== '') {
-      params['compression'] = compression
-    }
-
-    if (resolution !== '') {
-      params['resolution'] = resolution
-    }
-
-    if (rotation !== '') {
-      params['rotation'] = rotation
-    }
-
-    if (camera !== '') {
-      params['camera'] = camera
-    }
-
-    return params
-  }, [compression, resolution, rotation, camera])
+    return Object.assign({}, ...params) as VapixParameters
+  }, [
+    compression,
+    resolution,
+    rotation,
+    camera,
+    fps,
+    audio,
+    clock,
+    date,
+    text,
+    textstring,
+    textcolor,
+    textbackgroundcolor,
+    textpos,
+  ])
 
   return (
     <Player
@@ -220,6 +370,7 @@ const PlayerComponent: React.FC<PlayerComponentProps> = ({
       autoPlay={autoplay}
       format={format as Format}
       vapixParams={vapixParameters}
+      secure={secure}
     />
   )
 }

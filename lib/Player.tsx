@@ -7,6 +7,8 @@ import React, {
   useLayoutEffect,
   useRef,
 } from 'react'
+import styled from 'styled-components'
+import { Sdp } from 'media-stream-library/dist/esm/utils/protocols'
 
 import { Container, Layer } from './Container'
 import {
@@ -18,12 +20,10 @@ import {
 } from './PlaybackArea'
 import { Controls } from './Controls'
 import { Feedback } from './Feedback'
-import { Sdp } from 'media-stream-library/dist/esm/utils/protocols'
 import { Stats } from './Stats'
 import { useSwitch } from './hooks/useSwitch'
 import { getImageURL } from './utils'
 import { MetadataHandler } from './metadata'
-import styled from 'styled-components'
 
 const DEFAULT_API_TYPE = AXIS_IMAGE_CGI
 
@@ -56,19 +56,19 @@ const Limiter = styled.div`
 `
 
 interface PlayerProps {
-  hostname: string
-  vapixParams?: VapixParameters
-  format?: Format
-  autoPlay?: boolean
-  onSdp?: (msg: Sdp) => void
-  metadataHandler?: MetadataHandler
+  readonly hostname: string
+  readonly vapixParams?: VapixParameters
+  readonly format?: Format
+  readonly autoPlay?: boolean
+  readonly onSdp?: (msg: Sdp) => void
+  readonly metadataHandler?: MetadataHandler
   /**
    * Set to true if the camera requires a secure
    * connection, "https" and "wss" protocols.
    */
-  secure?: boolean
-  aspectRatio?: number
-  className?: string
+  readonly secure?: boolean
+  readonly aspectRatio?: number
+  readonly className?: string
 }
 
 export type PlayerNativeElement =
@@ -90,7 +90,7 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
       hostname,
       vapixParams = {},
       format,
-      autoPlay,
+      autoPlay = false,
       onSdp,
       metadataHandler,
       secure,
@@ -98,7 +98,7 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
     },
     ref,
   ) => {
-    const [play, setPlay] = useState(autoPlay || false)
+    const [play, setPlay] = useState(autoPlay)
     const [refresh, setRefresh] = useState(0)
     const [host, setHost] = useState(hostname)
     const [waiting, setWaiting] = useState(autoPlay)
@@ -187,15 +187,15 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
       setWaiting(false)
     }, [])
 
-    const onFormat = useCallback((format: Format | undefined) => {
-      switch (format) {
+    const onFormat = useCallback((newFormat: Format | undefined) => {
+      switch (newFormat) {
         case 'H264':
           setApi(AXIS_MEDIA_AMP)
-          setParameters({ ...parameters, videocodec: 'h264' })
+          setParameters((prevParams) => ({ ...prevParams, videocodec: 'h264' }))
           break
         case 'MJPEG':
           setApi(AXIS_MEDIA_AMP)
-          setParameters({ ...parameters, videocodec: 'jpeg' })
+          setParameters((prevParams) => ({ ...prevParams, videocodec: 'jpeg' }))
           break
         case 'JPEG':
         default:
@@ -207,19 +207,18 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
 
     useEffect(() => {
       onFormat(format)
-    }, [format])
+    }, [format, onFormat])
 
-    const onVapix = (key: string, value: string) => {
+    const onVapix = useCallback((key: string, value: string) => {
       setParameters((p: typeof vapixParams) => {
+        const newParams = { ...p, [key]: value }
         if (value === '') {
-          delete p[key]
-          return { ...p }
+          delete newParams[key]
         }
-
-        return { ...p, [key]: value }
+        return newParams
       })
-      setRefresh((value) => value + 1)
-    }
+      setRefresh((refreshCount) => refreshCount + 1)
+    }, [])
 
     useEffect(() => {
       const cb = () => {
@@ -311,18 +310,6 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
               <Feedback waiting={waiting} />
             </Layer>
             <Layer>
-              {showStatsOverlay && videoProperties !== undefined ? (
-                <Stats
-                  api={api}
-                  parameters={parameters}
-                  videoProperties={videoProperties}
-                  host={host}
-                  open={showStatsOverlay}
-                  refresh={refresh}
-                />
-              ) : null}
-            </Layer>
-            <Layer>
               <Controls
                 play={play}
                 src={host}
@@ -331,7 +318,6 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
                 onStop={onStop}
                 onRefresh={onRefresh}
                 onScreenshot={onScreenshot}
-                format={format}
                 onFormat={onFormat}
                 onVapix={onVapix}
                 labels={{
@@ -344,8 +330,17 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
                 }}
                 showStatsOverlay={showStatsOverlay}
                 toggleStats={toggleStatsOverlay}
+                api={api}
               />
             </Layer>
+            {showStatsOverlay && videoProperties !== undefined ? (
+              <Stats
+                api={api}
+                parameters={parameters}
+                videoProperties={videoProperties}
+                refresh={refresh}
+              />
+            ) : null}
           </Container>
         </Limiter>
       </MediaStreamPlayerContainer>
