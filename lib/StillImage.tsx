@@ -51,11 +51,14 @@ export const StillImage: React.FC<StillImageProps> = ({
   const [loaded, unsetLoaded] = useEventState(imgRef, 'load')
 
   useEffect(() => {
-    if (imgRef.current !== null) {
-      if (play && src !== undefined) {
-        imgRef.current.src = src
-      } else {
-        imgRef.current.src = ''
+    const imgEl = imgRef.current
+    if (imgEl === null) {
+      return
+    }
+    if (play && src !== undefined) {
+      imgEl.src = src
+      return () => {
+        imgEl.src = ''
         unsetLoaded()
       }
     }
