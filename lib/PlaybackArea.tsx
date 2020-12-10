@@ -1,4 +1,4 @@
-import React, { Ref } from 'react'
+import React, { Ref, useContext } from 'react'
 import { Sdp, pipelines } from 'media-stream-library/dist/esm/index.browser'
 import debug from 'debug'
 
@@ -7,6 +7,7 @@ import { WsRtspCanvas } from './WsRtspCanvas'
 import { StillImage } from './StillImage'
 import { MetadataHandler } from './metadata'
 import { PlayerNativeElement } from './utils/common'
+import { VideoPlayerContext } from './VideoPlayerProvider'
 
 const debugLog = debug('msp:api')
 
@@ -32,11 +33,6 @@ export interface VideoProperties {
 
 interface PlaybackAreaProps {
   readonly forwardedRef?: Ref<PlayerNativeElement>
-  readonly host: string
-  readonly api: string
-  readonly parameters?: VapixParameters
-  readonly play?: boolean
-  readonly refresh: number
   readonly onPlaying: (properties: VideoProperties) => void
   readonly onSdp?: (msg: Sdp) => void
   readonly metadataHandler?: MetadataHandler
@@ -157,16 +153,19 @@ const search = (api: string, parameters: VapixParameters = {}) => {
 
 export const PlaybackArea: React.FC<PlaybackAreaProps> = ({
   forwardedRef,
-  host,
-  api,
-  parameters = {},
-  play,
-  refresh,
   onPlaying,
   onSdp,
   metadataHandler,
   secure = window.location.protocol === 'https',
 }) => {
+  const { host, api, play, parameters, refresh } = useContext(
+    VideoPlayerContext,
+  )
+
+  if (api === undefined) {
+    return null
+  }
+
   const searchParams = search(api, {
     ...parameters,
     timestamp: refresh.toString(),

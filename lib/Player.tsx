@@ -25,6 +25,7 @@ import { getImageURL, Format, PlayerNativeElement } from './utils'
 import { MetadataHandler } from './metadata'
 import { Limiter } from './components/Limiter'
 import { MediaStreamPlayerContainer } from './components/MediaStreamPlayerContainer'
+import { VideoPlayerContext } from './VideoPlayerProvider'
 
 const DEFAULT_API_TYPE = AXIS_IMAGE_CGI
 
@@ -262,65 +263,66 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
      */
 
     return (
-      <MediaStreamPlayerContainer className={className}>
-        <Limiter ref={limiterRef}>
-          <Container aspectRatio={naturalAspectRatio}>
-            <Layer>
-              <PlaybackArea
-                forwardedRef={ref}
-                refresh={refresh}
-                play={play}
-                host={host}
-                api={api}
-                parameters={parameters}
-                onPlaying={onPlaying}
-                onSdp={onSdp}
-                metadataHandler={metadataHandler}
-                secure={secure}
-              />
-            </Layer>
-            <Layer>
-              <Feedback waiting={waiting} />
-            </Layer>
-            <Layer>
-              <Controls
-                play={play}
-                src={host}
-                parameters={parameters}
-                onPlay={onPlayPause}
-                onStop={onStop}
-                onRefresh={onRefresh}
-                onScreenshot={onScreenshot}
-                onFormat={onFormat}
-                onVapix={onVapix}
-                labels={{
-                  play: 'Play',
-                  pause: 'Pause',
-                  stop: 'Stop',
-                  refresh: 'Refresh',
-                  settings: 'Settings',
-                  screenshot: 'Take a snapshot',
-                  volume: 'Volume',
-                }}
-                showStatsOverlay={showStatsOverlay}
-                toggleStats={toggleStatsOverlay}
-                api={api}
-                volume={volume}
-                setVolume={setVolume}
-              />
-            </Layer>
-            {showStatsOverlay && videoProperties !== undefined ? (
-              <Stats
-                api={api}
-                parameters={parameters}
-                videoProperties={videoProperties}
-                refresh={refresh}
-                volume={volume}
-              />
-            ) : null}
-          </Container>
-        </Limiter>
-      </MediaStreamPlayerContainer>
+      <VideoPlayerContext.Provider
+        value={{
+          play,
+          setPlay,
+          refresh,
+          setRefresh,
+          host,
+          setHost,
+          api,
+          volume,
+          setVolume,
+          parameters,
+          setParameters,
+          videoProperties,
+          setVideoProperties,
+        }}
+      >
+        <MediaStreamPlayerContainer className={className}>
+          <Limiter ref={limiterRef}>
+            <Container aspectRatio={naturalAspectRatio}>
+              <Layer>
+                <PlaybackArea
+                  forwardedRef={ref}
+                  onPlaying={onPlaying}
+                  onSdp={onSdp}
+                  metadataHandler={metadataHandler}
+                  secure={secure}
+                />
+              </Layer>
+              <Layer>
+                <Feedback waiting={waiting} />
+              </Layer>
+              <Layer>
+                <Controls
+                  onPlay={onPlayPause}
+                  onStop={onStop}
+                  onRefresh={onRefresh}
+                  onScreenshot={onScreenshot}
+                  onFormat={onFormat}
+                  onVapix={onVapix}
+                  labels={{
+                    play: 'Play',
+                    pause: 'Pause',
+                    stop: 'Stop',
+                    refresh: 'Refresh',
+                    settings: 'Settings',
+                    screenshot: 'Take a snapshot',
+                    volume: 'Volume',
+                  }}
+                  showStatsOverlay={showStatsOverlay}
+                  toggleStats={toggleStatsOverlay}
+                />
+              </Layer>
+              {showStatsOverlay && videoProperties !== undefined ? (
+                <Stats />
+              ) : null}
+            </Container>
+          </Limiter>
+        </MediaStreamPlayerContainer>
+      </VideoPlayerContext.Provider>
     )
   },
 )

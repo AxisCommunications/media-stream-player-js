@@ -23,6 +23,7 @@ import { useUserActive } from './hooks/useUserActive'
 import { Format, PlayerNativeElement } from './utils'
 import { MediaStreamPlayerContainer } from './components/MediaStreamPlayerContainer'
 import { Limiter } from './components/Limiter'
+import { VideoPlayerContext } from './VideoPlayerProvider'
 
 const DEFAULT_API_TYPE = AXIS_IMAGE_CGI
 
@@ -165,40 +166,51 @@ export const BasicPlayer = forwardRef<PlayerNativeElement, BasicPlayerProps>(
      */
 
     return (
-      <MediaStreamPlayerContainer className={className}>
-        <Limiter ref={limiterRef}>
-          <Container aspectRatio={naturalAspectRatio}>
-            <Layer>
-              <PlaybackArea
-                forwardedRef={ref}
-                refresh={refresh}
-                play={play}
-                host={host}
-                api={api}
-                parameters={parameters}
-                onPlaying={onPlaying}
-                secure={secure}
-              />
-            </Layer>
-            <Layer>
-              <ControlArea
-                ref={controlArea}
-                visible={play !== true || userActive}
-              >
-                <ControlBar>
-                  <Button onClick={onPlayPause}>
-                    {play === true ? (
-                      <Pause title="Pause" />
-                    ) : (
-                      <Play title="Play" />
-                    )}
-                  </Button>
-                </ControlBar>
-              </ControlArea>
-            </Layer>
-          </Container>
-        </Limiter>
-      </MediaStreamPlayerContainer>
+      <VideoPlayerContext.Provider
+        value={{
+          play,
+          setPlay,
+          refresh,
+          setRefresh,
+          host,
+          setHost,
+          api,
+          parameters,
+          setParameters,
+          videoProperties,
+          setVideoProperties,
+        }}
+      >
+        <MediaStreamPlayerContainer className={className}>
+          <Limiter ref={limiterRef}>
+            <Container aspectRatio={naturalAspectRatio}>
+              <Layer>
+                <PlaybackArea
+                  forwardedRef={ref}
+                  onPlaying={onPlaying}
+                  secure={secure}
+                />
+              </Layer>
+              <Layer>
+                <ControlArea
+                  ref={controlArea}
+                  visible={play !== true || userActive}
+                >
+                  <ControlBar>
+                    <Button onClick={onPlayPause}>
+                      {play === true ? (
+                        <Pause title="Pause" />
+                      ) : (
+                        <Play title="Play" />
+                      )}
+                    </Button>
+                  </ControlBar>
+                </ControlArea>
+              </Layer>
+            </Container>
+          </Limiter>
+        </MediaStreamPlayerContainer>
+      </VideoPlayerContext.Provider>
     )
   },
 )

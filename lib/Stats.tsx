@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useInterval } from 'react-hooks-shareable'
-
-import { VapixParameters, VideoProperties } from './PlaybackArea'
 import { StreamStats } from './img'
+import { VideoPlayerContext } from './VideoPlayerProvider'
 
 const StatsWrapper = styled.div`
   position: absolute;
@@ -98,33 +97,22 @@ const StatsShow = styled.div`
   background: #292929 0% 0% no-repeat padding-box;
   opacity: 0.88;
 `
-
-interface StatsProps {
-  readonly api: string
-  readonly parameters: VapixParameters
-  readonly videoProperties: VideoProperties
-  readonly refresh: number
-  readonly volume?: number
-}
-
 interface Stat {
   readonly name: string
   readonly value: string | number
   readonly unit?: string
 }
 
-const StatsData: React.FC<StatsProps> = ({
-  api,
-  parameters,
-  videoProperties,
-  refresh,
-  volume,
-}) => {
+const StatsData: React.FC = () => {
+  const { api, parameters, videoProperties, refresh, volume } = useContext(
+    VideoPlayerContext,
+  )
   const [stats, setStats] = useState<Array<Stat>>([])
 
   // Updates stat values
   const updateValues = useCallback(() => {
     let streamType = 'Unknown'
+
     if (api === 'jpg') {
       streamType = 'Still image'
     } else if (api === 'media') {
@@ -134,6 +122,11 @@ const StatsData: React.FC<StatsProps> = ({
         streamType = 'MJPEG'
       }
     }
+
+    if (videoProperties === undefined) {
+      return
+    }
+
     const { width, height, pipeline } = videoProperties
     let statsData: Array<Stat> = [
       {
@@ -216,13 +209,7 @@ const StatsData: React.FC<StatsProps> = ({
   )
 }
 
-export const Stats: React.FC<StatsProps> = ({
-  api,
-  parameters,
-  videoProperties,
-  refresh,
-  volume,
-}) => {
+export const Stats: React.FC = () => {
   const [showStats, setShowStats] = useState(true)
 
   // Handles show/hide stats
@@ -249,13 +236,7 @@ export const Stats: React.FC<StatsProps> = ({
               </HideLink>
             </StatsHide>
           </StatsHeader>
-          <StatsData
-            api={api}
-            parameters={parameters}
-            videoProperties={videoProperties}
-            refresh={refresh}
-            volume={volume}
-          />
+          <StatsData />
         </StatsWrapper>
       ) : (
         <StatsShow>

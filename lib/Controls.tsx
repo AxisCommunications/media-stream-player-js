@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useContext } from 'react'
 import styled from 'styled-components'
 
 import { useUserActive } from './hooks/useUserActive'
@@ -6,8 +6,8 @@ import { useUserActive } from './hooks/useUserActive'
 import { Button } from './components/Button'
 import { Play, Pause, Stop, Refresh, CogWheel, Screenshot } from './img'
 import { Settings } from './Settings'
-import { VapixParameters } from './PlaybackArea'
 import { Format } from './utils'
+import { VideoPlayerContext } from './VideoPlayerProvider'
 
 export const ControlArea = styled.div<{ readonly visible: boolean }>`
   width: 100%;
@@ -39,9 +39,6 @@ const VolumeContainer = styled.div`
 `
 
 interface ControlsProps {
-  readonly play?: boolean
-  readonly src?: string
-  readonly parameters: VapixParameters
   readonly onPlay: () => void
   readonly onStop: () => void
   readonly onRefresh: () => void
@@ -59,15 +56,9 @@ interface ControlsProps {
   }
   readonly showStatsOverlay: boolean
   readonly toggleStats: () => void
-  readonly api: string
-  readonly volume?: number
-  readonly setVolume?: (v: number) => void
 }
 
 export const Controls: React.FC<ControlsProps> = ({
-  play,
-  src,
-  parameters,
   onPlay,
   onStop,
   onRefresh,
@@ -77,10 +68,10 @@ export const Controls: React.FC<ControlsProps> = ({
   labels,
   showStatsOverlay,
   toggleStats,
-  api,
-  volume,
-  setVolume,
 }) => {
+  const { play, host, parameters, api, volume, setVolume } = useContext(
+    VideoPlayerContext,
+  )
   const controlArea = useRef(null)
   const userActive = useUserActive(controlArea)
 
@@ -112,17 +103,17 @@ export const Controls: React.FC<ControlsProps> = ({
             <Play title={labels?.play} />
           )}
         </Button>
-        {src !== undefined && (
+        {host !== undefined && (
           <Button onClick={onStop}>
             <Stop title={labels?.stop} />
           </Button>
         )}
-        {src !== undefined && (
+        {host !== undefined && (
           <Button onClick={onRefresh}>
             <Refresh title={labels?.refresh} />
           </Button>
         )}
-        {src !== undefined && (
+        {host !== undefined && (
           <Button onClick={onScreenshot}>
             <Screenshot title={labels?.screenshot} />
           </Button>
