@@ -2,7 +2,7 @@
 
 Please use the github issue tracker for any bugs or feature requests,
 email sent to the maintainer(s) will probably be ignored.
-If you would like to backport a feature from master to a release
+If you would like to backport a feature from `main` to a release
 branch, also put a ticket for enhancement.
 
 If you would like to contribute bug fixes or new components,
@@ -13,12 +13,3 @@ We use [conventional commits](https://www.conventionalcommits.org) to write comm
 If your changes cause problems with how the library was used before,
 don't forget to write `BREAKING CHANGE:` inside the commit message body,
 followed by a description of what has changed and how to adapt for it.
-
-## Development
-
-### Media Stream Library Imports
-
-Media Stream Library has exports for both NodeJS and the browser. Typescript
-seems to automatically pick the NodeJS version of the typings when importing
-from `media-stream-library`. That's why you need to import directly from
-`media-stream-library/dist/esm/index.browser` instead.

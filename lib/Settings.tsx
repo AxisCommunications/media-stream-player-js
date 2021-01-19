@@ -7,8 +7,12 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 
-import { Format } from './Player'
-import { AXIS_IMAGE_CGI, AXIS_MEDIA_AMP, VapixParameters } from './PlaybackArea'
+import {
+  AXIS_IMAGE_CGI,
+  AXIS_MEDIA_AMP,
+  VapixParameters,
+  Format,
+} from './PlaybackArea'
 import { Switch } from './components/Switch'
 
 const SettingsMenu = styled.div`
