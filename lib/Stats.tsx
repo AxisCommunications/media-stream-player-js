@@ -1,9 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useInterval } from 'react-hooks-shareable'
+import { Html5VideoPipeline } from 'media-stream-library'
 
-import { Format, VideoProperties } from './PlaybackArea'
+import { Format, PlayerPipeline, VideoProperties } from './PlaybackArea'
 import { StreamStats } from './img'
+
+const isHtml5VideoPipeline = (
+  pipeline: PlayerPipeline | null | undefined,
+): pipeline is Html5VideoPipeline => {
+  return (pipeline as Html5VideoPipeline)?.tracks !== undefined
+}
 
 const StatsWrapper = styled.div`
   position: absolute;
@@ -148,7 +155,7 @@ const StatsData: React.FC<StatsProps> = ({
         unit: refresh > 1 ? 'times' : 'time',
       },
     ]
-    if (pipeline !== null && pipeline !== undefined) {
+    if (isHtml5VideoPipeline(pipeline)) {
       const tracks = pipeline.tracks?.map((track, index) =>
         Object.assign({ index }, track),
       )
