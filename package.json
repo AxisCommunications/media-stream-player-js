@@ -3,7 +3,7 @@
   "version": "4.3.0",
   "description": "Player built on top of media-stream-library",
   "license": "MIT",
-  "main": "dist/esm/index.js",
+  "main": "dist/es5/index.js",
   "types": "dist/esm/index.d.ts",
   "scripts": {
     "lint": "yarn lint:ts && yarn prettier:check",
@@ -16,9 +16,10 @@
     "dev:esm": "yarn tsc --watch",
     "dev:example": "webpack serve --config webpack.example.js --env camera=$MSP_CAMERA",
     "dev": "yarn build:esm && concurrently \"yarn dev:esm\" \"yarn dev:example\"",
+    "build:es5": "yarn babel --extensions '.ts,.tsx' -d dist/es5 lib",
     "build:esm": "yarn tsc",
     "build:bundle": "yarn webpack --config webpack.config.js && sbin/copyMinified.sh",
-    "build": "yarn build:esm && yarn build:bundle",
+    "build": "yarn build:es5 && yarn build:esm && yarn build:bundle",
     "release": "sbin/release.sh"
   },
   "repository": {

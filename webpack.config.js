@@ -21,26 +21,6 @@ module.exports = {
         test: /\.tsx?$/,
         use: {
           loader: 'babel-loader',
-          options: {
-            babelrc: false,
-            sourceType: 'unambiguous',
-            presets: [
-              '@babel/typescript',
-              '@babel/preset-react',
-              [
-                '@babel/env',
-                {
-                  targets: { browsers: ['last 2 versions, not dead'] },
-                  useBuiltIns: 'usage',
-                  corejs: { version: '3.8', proposals: true },
-                },
-              ],
-            ],
-            plugins: [
-              '@babel/plugin-proposal-class-properties',
-              '@babel/plugin-proposal-object-rest-spread',
-            ],
-          },
         },
       },
     ],

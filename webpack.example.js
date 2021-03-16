@@ -28,26 +28,6 @@ module.exports = (env) => {
           test: /\.jsx?$/,
           use: {
             loader: 'babel-loader',
-            options: {
-              babelrc: false,
-              presets: [
-                '@babel/preset-react',
-                [
-                  '@babel/env',
-                  {
-                    targets: {
-                      browsers: [
-                        'last 2 chrome versions, last 2 firefox versions',
-                      ],
-                    },
-                  },
-                ],
-              ],
-              plugins: [
-                '@babel/plugin-proposal-class-properties',
-                '@babel/plugin-proposal-object-rest-spread',
-              ],
-            },
           },
         },
       ],
