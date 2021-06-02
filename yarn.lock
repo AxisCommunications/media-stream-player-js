@@ -9745,8 +9745,8 @@ fsevents@~2.3.1:
     webpack-dev-server: 3.11.2
   peerDependencies:
     luxon: 1.25.0
-    react: 17.0.1
-    react-dom: 17.0.1
+    react: 17.0.2
+    react-dom: 17.0.2
     styled-components: 5.2.0
   languageName: unknown
   linkType: soft
