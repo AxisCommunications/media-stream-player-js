@@ -70,7 +70,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prettier", "npm:2.3.2"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:17.0.2"],
-            ["react-hooks-shareable", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:1.38.0"],
+            ["react-hooks-shareable", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:1.41.0"],
             ["react-is", "npm:17.0.2"],
             ["semver", "npm:7.3.5"],
             ["style-loader", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:3.2.1"],
@@ -12225,7 +12225,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prettier", "npm:2.3.2"],
             ["react", "npm:17.0.2"],
             ["react-dom", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:17.0.2"],
-            ["react-hooks-shareable", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:1.38.0"],
+            ["react-hooks-shareable", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:1.41.0"],
             ["react-is", "npm:17.0.2"],
             ["semver", "npm:7.3.5"],
             ["style-loader", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:3.2.1"],
@@ -13927,17 +13927,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["react-hooks-shareable", [
-        ["npm:1.38.0", {
-          "packageLocation": "./.yarn/cache/react-hooks-shareable-npm-1.38.0-69f9fcd876-edd2bc16b4.zip/node_modules/react-hooks-shareable/",
+        ["npm:1.41.0", {
+          "packageLocation": "./.yarn/cache/react-hooks-shareable-npm-1.41.0-abeb80922e-5e375bfde3.zip/node_modules/react-hooks-shareable/",
           "packageDependencies": [
-            ["react-hooks-shareable", "npm:1.38.0"]
+            ["react-hooks-shareable", "npm:1.41.0"]
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:1.38.0", {
-          "packageLocation": "./.yarn/__virtual__/react-hooks-shareable-virtual-2029be3022/0/cache/react-hooks-shareable-npm-1.38.0-69f9fcd876-edd2bc16b4.zip/node_modules/react-hooks-shareable/",
+        ["virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:1.41.0", {
+          "packageLocation": "./.yarn/__virtual__/react-hooks-shareable-virtual-0bcecf6a46/0/cache/react-hooks-shareable-npm-1.41.0-abeb80922e-5e375bfde3.zip/node_modules/react-hooks-shareable/",
           "packageDependencies": [
-            ["react-hooks-shareable", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:1.38.0"],
+            ["react-hooks-shareable", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:1.41.0"],
             ["@juggle/resize-observer", "npm:3.3.1"],
             ["@types/react", "npm:17.0.20"],
             ["react", "npm:17.0.2"]

@@ -9685,7 +9685,7 @@ fsevents@~2.3.1:
     prettier: 2.3.2
     react: 17.0.2
     react-dom: 17.0.2
-    react-hooks-shareable: 1.38.0
+    react-hooks-shareable: 1.41.0
     react-is: 17.0.2
     semver: 7.3.5
     style-loader: 3.2.1
@@ -11169,14 +11169,14 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"react-hooks-shareable@npm:1.38.0":
-  version: 1.38.0
-  resolution: "react-hooks-shareable@npm:1.38.0"
+"react-hooks-shareable@npm:1.41.0":
+  version: 1.41.0
+  resolution: "react-hooks-shareable@npm:1.41.0"
   dependencies:
     "@juggle/resize-observer": 3.3.1
   peerDependencies:
     react: ^17.0.2
-  checksum: edd2bc16b496feb92d3c03f2019a531a757d6287182c750c2bf02c7623260dedc2a2f6fd62d5241445985e4c8055431270bf207cfacd8b049fc5107587f0cc1d
+  checksum: 5e375bfde34176594d8999e539b96252283d5e1e53d527e56ba7e57d4b080801834d3fccf95e8342db3f550155acb10e2085e6f38b8a7c3effc8c324025db14d
   languageName: node
   linkType: hard
 
