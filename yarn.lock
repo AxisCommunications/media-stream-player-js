@@ -6185,9 +6185,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-functional@npm:3.6.0":
-  version: 3.6.0
-  resolution: "eslint-plugin-functional@npm:3.6.0"
+"eslint-plugin-functional@npm:3.7.0":
+  version: 3.7.0
+  resolution: "eslint-plugin-functional@npm:3.7.0"
   dependencies:
     "@typescript-eslint/experimental-utils": ^4.9.1
     array.prototype.flatmap: ^1.2.4
@@ -6203,7 +6203,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 53dfe47e905b1d0ed25db05189e81b7c9d6f079f48746ce44f64856c925975f9d53ae9e03e083cb1c01b67bdfcc8385be7c7528573ebde23cd0a8feb681747e2
+  checksum: 20b30d0fb9e4b57af459db7349e935e3fc8cd46d55f8361028d6225c37cad2819700d9fc21075de9b7f2302534765e86713554b3b49bdc79cc4f12f24cc68287
   languageName: node
   linkType: hard
 
@@ -6257,13 +6257,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:7.24.0":
-  version: 7.24.0
-  resolution: "eslint-plugin-react@npm:7.24.0"
+"eslint-plugin-react@npm:7.25.1":
+  version: 7.25.1
+  resolution: "eslint-plugin-react@npm:7.25.1"
   dependencies:
     array-includes: ^3.1.3
     array.prototype.flatmap: ^1.2.4
     doctrine: ^2.1.0
+    estraverse: ^5.2.0
     has: ^1.0.3
     jsx-ast-utils: ^2.4.1 || ^3.0.0
     minimatch: ^3.0.4
@@ -6275,7 +6276,7 @@ __metadata:
     string.prototype.matchall: ^4.0.5
   peerDependencies:
     eslint: ^3 || ^4 || ^5 || ^6 || ^7
-  checksum: bf844f98d93f3617fbd03df4be4f4c9e8e49ea035678762b73a28df730e9518d5ac636293f6326b41b4a0678f9dfa059ce559f6652c7a2d914d477ec3a389619
+  checksum: e22ffbb6d336558cab38717c8c6199b72635500b9bd909891ba45865adae5846912a2b3daa355b0c1b1bfe6664b28ee277c14943acc739e703316eff87c1fce4
   languageName: node
   linkType: hard
 
@@ -9671,10 +9672,10 @@ fsevents@~2.3.1:
     debug: 4.3.2
     eslint: 7.32.0
     eslint-config-typescript-shareable: 1.3.0
-    eslint-plugin-functional: 3.6.0
+    eslint-plugin-functional: 3.7.0
     eslint-plugin-import: 2.24.2
     eslint-plugin-node: 11.1.0
-    eslint-plugin-react: 7.24.0
+    eslint-plugin-react: 7.25.1
     eslint-plugin-react-hooks: 4.2.0
     file-loader: 6.2.0
     html-webpack-plugin: 5.3.2
