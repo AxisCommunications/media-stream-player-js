@@ -3230,10 +3230,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/luxon@npm:1.27.1":
-  version: 1.27.1
-  resolution: "@types/luxon@npm:1.27.1"
-  checksum: 732405c7459dd9f991cff056b801620b92d7c18ddad3cd7c6d3b9c2de714dbfca0c48fc103a5544d19c6e7b9bb7a954bbd2369b30733c680a4633fa60cb03f1f
+"@types/luxon@npm:2.0.4":
+  version: 2.0.4
+  resolution: "@types/luxon@npm:2.0.4"
+  checksum: b1877da73ce5e42641c7416fe2af501b197dfba150d7fb230b51c5b9171a17e928ccd7422ac9368040647aab64fd36950c8df7303188221d9a1518dde91bf377
   languageName: node
   linkType: hard
 
@@ -9659,7 +9659,7 @@ fsevents@~2.3.1:
     "@juggle/resize-observer": 3.3.1
     "@types/debug": 4.1.7
     "@types/jest": 27.0.1
-    "@types/luxon": 1.27.1
+    "@types/luxon": 2.0.4
     "@types/react": 17.0.20
     "@types/react-dom": 17.0.9
     "@types/styled-components": 5.1.14

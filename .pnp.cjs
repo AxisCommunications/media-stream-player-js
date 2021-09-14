@@ -45,7 +45,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@juggle/resize-observer", "npm:3.3.1"],
             ["@types/debug", "npm:4.1.7"],
             ["@types/jest", "npm:27.0.1"],
-            ["@types/luxon", "npm:1.27.1"],
+            ["@types/luxon", "npm:2.0.4"],
             ["@types/react", "npm:17.0.20"],
             ["@types/react-dom", "npm:17.0.9"],
             ["@types/styled-components", "npm:5.1.14"],
@@ -4695,10 +4695,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@types/luxon", [
-        ["npm:1.27.1", {
-          "packageLocation": "./.yarn/cache/@types-luxon-npm-1.27.1-ffe8f597c2-732405c745.zip/node_modules/@types/luxon/",
+        ["npm:2.0.4", {
+          "packageLocation": "./.yarn/cache/@types-luxon-npm-2.0.4-02a6afb4ec-b1877da73c.zip/node_modules/@types/luxon/",
           "packageDependencies": [
-            ["@types/luxon", "npm:1.27.1"]
+            ["@types/luxon", "npm:2.0.4"]
           ],
           "linkType": "HARD",
         }]
@@ -12199,7 +12199,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@juggle/resize-observer", "npm:3.3.1"],
             ["@types/debug", "npm:4.1.7"],
             ["@types/jest", "npm:27.0.1"],
-            ["@types/luxon", "npm:1.27.1"],
+            ["@types/luxon", "npm:2.0.4"],
             ["@types/react", "npm:17.0.20"],
             ["@types/react-dom", "npm:17.0.9"],
             ["@types/styled-components", "npm:5.1.14"],
