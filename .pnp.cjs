@@ -53,7 +53,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/parser", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:4.31.1"],
             ["babel-loader", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:8.2.2"],
             ["concurrently", "npm:6.2.1"],
-            ["core-js", "npm:3.16.2"],
+            ["core-js", "npm:3.17.3"],
             ["debug", "virtual:93cfac0decc98ff5276a1ccd8494017109fb46bc250f02e5c05bf030d96dd0a4761f88c674793028f4e24c120b4abd0293e49261e8aa030738356b518653bdc1#npm:4.3.2"],
             ["eslint", "npm:7.32.0"],
             ["eslint-config-typescript-shareable", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:1.3.0"],
@@ -7213,10 +7213,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["core-js", [
-        ["npm:3.16.2", {
-          "packageLocation": "./.yarn/unplugged/core-js-npm-3.16.2-c7ce9e8d48/node_modules/core-js/",
+        ["npm:3.17.3", {
+          "packageLocation": "./.yarn/unplugged/core-js-npm-3.17.3-88e85a44f5/node_modules/core-js/",
           "packageDependencies": [
-            ["core-js", "npm:3.16.2"]
+            ["core-js", "npm:3.17.3"]
           ],
           "linkType": "HARD",
         }]
@@ -12208,7 +12208,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/parser", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:4.31.1"],
             ["babel-loader", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:8.2.2"],
             ["concurrently", "npm:6.2.1"],
-            ["core-js", "npm:3.16.2"],
+            ["core-js", "npm:3.17.3"],
             ["debug", "virtual:93cfac0decc98ff5276a1ccd8494017109fb46bc250f02e5c05bf030d96dd0a4761f88c674793028f4e24c120b4abd0293e49261e8aa030738356b518653bdc1#npm:4.3.2"],
             ["eslint", "npm:7.32.0"],
             ["eslint-config-typescript-shareable", "virtual:5ea1ecd5c7e999cf26fef7a6845227c1f8fb96713d65e0975cb7a10044a02438c423a5d45c634d3272b0181d45f043f775883ce7ac37acd403bbfde748f5f341#npm:1.3.0"],
