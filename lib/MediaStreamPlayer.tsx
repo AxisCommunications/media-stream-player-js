@@ -7,6 +7,7 @@ import { Format } from './types'
 
 enum PlayerVariants {
   BASIC = 'basic',
+  NORMAL = 'normal',
   ADVANCED = 'advanced',
 }
 interface InitialAttributes {
@@ -29,6 +30,8 @@ interface InitialAttributes {
   readonly textbackgroundcolor: string
   readonly textpos: string
   readonly secure: boolean
+  readonly wsproxy: string
+  readonly rtspurl: string
 }
 
 type SetStateType = React.Dispatch<React.SetStateAction<InitialAttributes>>
@@ -66,6 +69,8 @@ export class MediaStreamPlayer extends HTMLElement {
       'textbackgroundcolor',
       'textpos',
       'secure',
+      'wsproxy',
+      'rtspurl',
     ]
   }
 
@@ -90,6 +95,8 @@ export class MediaStreamPlayer extends HTMLElement {
       textbackgroundcolor,
       textpos,
       secure,
+      wsproxy,
+      rtspurl,
     } = this
 
     return {
@@ -112,6 +119,8 @@ export class MediaStreamPlayer extends HTMLElement {
       textbackgroundcolor,
       textpos,
       secure,
+      wsproxy,
+      rtspurl,
     }
   }
 
@@ -279,7 +288,40 @@ export class MediaStreamPlayer extends HTMLElement {
     }
   }
 
+  public get wsproxy() {
+    return this.getAttribute('wsproxy') ?? ''
+  }
+
+  public set wsproxy(value: string) {
+    this.setAttribute('wsproxy', value)
+  }
+
+  public get rtspurl() {
+    return this.getAttribute('rtspurl') ?? ''
+  }
+
+  public set rtspurl(value: string) {
+    this.setAttribute('rtspurl', value)
+  }
+
   public connectedCallback() {
+    if (this.rtspurl) {
+      // RTSP over WS player, no AXIS specific infra required
+      ReactDOM.render(
+        <PlayerComponent
+          // eslint-disable-next-line react/jsx-no-bind
+          subscribeAttributesChanged={(cb) =>
+            this.attributeChangeSubscriber(cb)
+          }
+          initialAttributes={{
+            ...this.allAttributes,
+          }}
+        />,
+        this,
+      )
+      return
+    }
+
     const userGroupUrl = new URL(
       `http://${this.hostname}/axis-cgi/usergroup.cgi`,
     )
@@ -343,6 +385,8 @@ const PlayerComponent: React.FC<PlayerComponentProps> = ({
   const {
     variant,
     hostname,
+    wsproxy,
+    rtspurl,
     autoplay,
     autoretry,
     format,
@@ -405,6 +449,8 @@ const PlayerComponent: React.FC<PlayerComponentProps> = ({
       return (
         <Player
           hostname={hostname}
+          wsproxy={wsproxy}
+          rtspurl={rtspurl}
           autoPlay={autoplay}
           autoRetry={autoretry}
           initialFormat={format as Format}
@@ -412,10 +458,26 @@ const PlayerComponent: React.FC<PlayerComponentProps> = ({
           secure={secure}
         />
       )
+    case PlayerVariants.NORMAL:
+      return (
+        <Player
+          hostname={hostname}
+          wsproxy={wsproxy}
+          rtspurl={rtspurl}
+          autoPlay={autoplay}
+          autoRetry={autoretry}
+          initialFormat={format as Format}
+          vapixParams={vapixParameters}
+          secure={secure}
+          settings={false}
+        />
+      )
     case PlayerVariants.BASIC:
       return (
         <BasicPlayer
           hostname={hostname}
+          wsproxy={wsproxy}
+          rtspurl={rtspurl}
           autoPlay={autoplay}
           autoRetry={autoretry}
           format={format as Format}

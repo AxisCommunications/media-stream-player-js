@@ -30,6 +30,8 @@ const DEFAULT_FORMAT = Format.JPEG
 
 interface PlayerProps {
   readonly hostname: string
+  readonly wsproxy: string
+  readonly rtspurl: string
   readonly vapixParams?: VapixParameters
   readonly initialFormat?: Format
   readonly autoPlay?: boolean
@@ -59,12 +61,15 @@ interface PlayerProps {
    * Activate automatic retries on RTSP errors.
    */
   readonly autoRetry?: boolean
+  readonly settings?: boolean
 }
 
 export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
   (
     {
       hostname,
+      wsproxy,
+      rtspurl,
       vapixParams = {},
       initialFormat = DEFAULT_FORMAT,
       autoPlay = false,
@@ -75,6 +80,7 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
       startTime,
       duration,
       autoRetry = false,
+      settings = true,
     },
     ref,
   ) => {
@@ -85,6 +91,8 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
     const [waiting, setWaiting] = useState(autoPlay)
     const [volume, setVolume] = useState<number>()
     const [format, setFormat] = useState<Format>(initialFormat)
+    const [ws_proxy, setWSProxy] = useState(wsproxy)
+    const [rtsp_url, setRTSPURL] = useState(rtspurl)
 
     /**
      * VAPIX parameters
@@ -139,9 +147,11 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
       } else {
         setWaiting(true)
         setHost(hostname)
+        setWSProxy(wsproxy)
+        setRTSPURL(rtspurl)
         setPlay(true)
       }
-    }, [play, hostname])
+    }, [play, hostname, wsproxy, rtspurl])
 
     const onRefresh = useCallback(() => {
       setPlay(true)
@@ -167,6 +177,8 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
     const onStop = useCallback(() => {
       setPlay(false)
       setHost('')
+      setWSProxy('')
+      setRTSPURL('')
       setWaiting(false)
     }, [])
 
@@ -190,17 +202,21 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
         if (document.visibilityState === 'visible') {
           setPlay(true)
           setHost(hostname)
+          setWSProxy(wsproxy)
+          setRTSPURL(rtspurl)
         } else if (document.visibilityState === 'hidden') {
           setPlay(false)
           setWaiting(false)
           setHost('')
+          setWSProxy('')
+          setRTSPURL('')
         }
       }
 
       document.addEventListener('visibilitychange', cb)
 
       return () => document.removeEventListener('visibilitychange', cb)
-    }, [hostname])
+    }, [hostname, wsproxy, rtspurl])
 
     /**
      * Aspect ratio
@@ -284,6 +300,8 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
                 play={play}
                 offset={offset}
                 host={host}
+                wsproxy={ws_proxy}
+                rtspurl={rtsp_url}
                 format={format}
                 parameters={parameters}
                 onPlaying={onPlaying}
@@ -326,6 +344,7 @@ export const Player = forwardRef<PlayerNativeElement, PlayerProps>(
                 setVolume={setVolume}
                 startTime={startTime}
                 duration={duration}
+                showSettings={settings}
               />
             </Layer>
             {showStatsOverlay && videoProperties !== undefined ? (

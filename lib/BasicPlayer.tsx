@@ -27,6 +27,8 @@ const DEFAULT_FORMAT = Format.JPEG
 
 interface BasicPlayerProps {
   readonly hostname: string
+  readonly wsproxy: string
+  readonly rtspurl: string
   readonly vapixParams?: VapixParameters
   readonly format?: Format
   readonly autoPlay?: boolean
@@ -46,6 +48,8 @@ export const BasicPlayer = forwardRef<PlayerNativeElement, BasicPlayerProps>(
   (
     {
       hostname,
+      wsproxy,
+      rtspurl,
       vapixParams = {},
       format = DEFAULT_FORMAT,
       autoPlay = false,
@@ -57,6 +61,8 @@ export const BasicPlayer = forwardRef<PlayerNativeElement, BasicPlayerProps>(
   ) => {
     const [play, setPlay] = useState(autoPlay)
     const [host, setHost] = useState(hostname)
+    const [ws_proxy, setWSProxy] = useState(wsproxy)
+    const [rtsp_url, setRTSPURL] = useState(rtspurl)
 
     /**
      * Controls
@@ -75,25 +81,31 @@ export const BasicPlayer = forwardRef<PlayerNativeElement, BasicPlayerProps>(
         setPlay(false)
       } else {
         setHost(hostname)
+        setWSProxy(wsproxy)
+        setRTSPURL(rtspurl)
         setPlay(true)
       }
-    }, [play, hostname])
+    }, [play, hostname, wsproxy, rtspurl])
 
     useEffect(() => {
       const cb = () => {
         if (document.visibilityState === 'visible') {
           setPlay(true)
           setHost(hostname)
+          setWSProxy(wsproxy)
+          setRTSPURL(rtspurl)
         } else if (document.visibilityState === 'hidden') {
           setPlay(false)
           setHost('')
+          setWSProxy('')
+          setRTSPURL('')
         }
       }
 
       document.addEventListener('visibilitychange', cb)
 
       return () => document.removeEventListener('visibilitychange', cb)
-    }, [hostname])
+    }, [hostname, wsproxy, rtspurl])
 
     /**
      * Aspect ratio
@@ -156,6 +168,8 @@ export const BasicPlayer = forwardRef<PlayerNativeElement, BasicPlayerProps>(
                 refresh={0}
                 play={play}
                 host={host}
+                wsproxy={ws_proxy}
+                rtspurl={rtsp_url}
                 format={format}
                 parameters={vapixParams}
                 onPlaying={onPlaying}

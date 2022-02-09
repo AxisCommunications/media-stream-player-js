@@ -72,6 +72,8 @@ export interface VideoProperties {
 interface PlaybackAreaProps {
   readonly forwardedRef?: Ref<PlayerNativeElement>
   readonly host: string
+  readonly wsproxy: string
+  readonly rtspurl: string
   readonly format: Format
   readonly parameters?: VapixParameters
   readonly play?: boolean
@@ -219,6 +221,8 @@ const searchParams = (api: AxisApi, parameters: VapixParameters = {}) => {
 
 export const PlaybackArea: React.FC<PlaybackAreaProps> = ({
   forwardedRef,
+  wsproxy,
+  rtspurl,
   host,
   format,
   parameters = {},
@@ -234,6 +238,40 @@ export const PlaybackArea: React.FC<PlaybackAreaProps> = ({
   autoRetry = false,
 }) => {
   const timestamp = refresh.toString()
+
+  if (format === Format.RTP_H264 && rtspurl) {
+    const rtsp = rtspurl
+    let ws = ''
+    if (rtsp) {
+      const url = new URL(rtsp)
+      const rtsp_host = url.hostname
+      const rtsp_port = url.port || '554'
+
+      const ws_proto = secure ? Protocol.WSS : Protocol.WS
+      const port_suffix = window.location.port ? `:${window.location.port}` : ''
+      const ws_proxy = wsproxy || `${window.location.hostname}${port_suffix}`
+      ws = `${ws_proto}//${ws_proxy}`
+    }
+
+    return (
+      <WsRtspVideo
+        key={refresh}
+        forwardedRef={forwardedRef as Ref<HTMLVideoElement>}
+        {...{
+          ws,
+          rtsp,
+          play,
+          offset,
+          onPlaying,
+          onEnded,
+          onSdp,
+          onRtcp,
+          metadataHandler,
+          autoRetry,
+        }}
+      />
+    )
+  }
 
   if (format === Format.RTP_H264) {
     const ws = wsUri(secure ? Protocol.WSS : Protocol.WS, host)

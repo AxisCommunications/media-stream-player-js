@@ -150,6 +150,7 @@ interface ControlsProps {
   readonly format: Format
   readonly volume?: number
   readonly setVolume?: (v: number) => void
+  readonly showSettings?: boolean
 }
 
 export const Controls: React.FC<ControlsProps> = ({
@@ -172,6 +173,7 @@ export const Controls: React.FC<ControlsProps> = ({
   format,
   volume,
   setVolume,
+  showSettings = true,
 }) => {
   const controlArea = useRef(null)
   const userActive = useUserActive(controlArea)
@@ -400,9 +402,11 @@ export const Controls: React.FC<ControlsProps> = ({
             {totalDuration === Infinity ? '∙ LIVE' : progress.counter}
           </ProgressIndicator>
         </Progress>
-        <Button onClick={toggleSettings}>
-          <CogWheel title={labels?.settings} />
-        </Button>
+        {showSettings && (
+          <Button onClick={toggleSettings}>
+            <CogWheel title={labels?.settings} />
+          </Button>
+        )}
       </ControlBar>
       {settings && (
         <Settings
