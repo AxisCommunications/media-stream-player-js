@@ -41,12 +41,12 @@ export enum Protocol {
   'WSS' = 'wss:',
 }
 
-export const FORMAT_API: Record<Format, AxisApi> = {
-  RTP_H264: AxisApi.AXIS_MEDIA_AMP,
-  RTP_JPEG: AxisApi.AXIS_MEDIA_AMP,
-  MP4_H264: AxisApi.AXIS_MEDIA_CGI,
-  JPEG: AxisApi.AXIS_IMAGE_CGI,
-}
+export const FORMAT_API = {
+  [Format.RTP_H264]: AxisApi.AXIS_MEDIA_AMP,
+  [Format.RTP_JPEG]: AxisApi.AXIS_MEDIA_AMP,
+  [Format.MP4_H264]: AxisApi.AXIS_MEDIA_CGI,
+  [Format.JPEG]: AxisApi.AXIS_IMAGE_CGI,
+} as const
 
 export interface VapixParameters {
   readonly [key: string]: string
@@ -233,103 +233,102 @@ export const PlaybackArea: React.FC<PlaybackAreaProps> = ({
 }) => {
   const timestamp = refresh.toString()
 
-  if (format === Format.RTP_H264) {
-    const ws = wsUri(secure ? Protocol.WSS : Protocol.WS, host)
-    const rtsp = rtspUri(
-      host,
-      searchParams(FORMAT_API[format], {
-        ...parameters,
-        timestamp,
-        videocodec: 'h264',
-      }),
-    )
+  switch (format) {
+    case Format.RTP_H264: {
+      const ws = wsUri(secure ? Protocol.WSS : Protocol.WS, host)
+      const rtsp = rtspUri(
+        host,
+        searchParams(FORMAT_API[format], {
+          ...parameters,
+          timestamp,
+          videocodec: 'h264',
+        }),
+      )
 
-    return (
-      <WsRtspVideo
-        key={refresh}
-        forwardedRef={forwardedRef as Ref<HTMLVideoElement>}
-        {...{
-          ws,
-          rtsp,
-          play,
-          offset,
-          onPlaying,
-          onSdp,
-          onRtcp,
-          metadataHandler,
-          autoRetry,
-        }}
-      />
-    )
+      return (
+        <WsRtspVideo
+          key={refresh}
+          forwardedRef={forwardedRef as Ref<HTMLVideoElement>}
+          {...{
+            ws,
+            rtsp,
+            play,
+            offset,
+            onPlaying,
+            onSdp,
+            onRtcp,
+            metadataHandler,
+            autoRetry,
+          }}
+        />
+      )
+    }
+    case Format.RTP_JPEG: {
+      const ws = wsUri(secure ? Protocol.WSS : Protocol.WS, host)
+      const rtsp = rtspUri(
+        host,
+        searchParams(FORMAT_API[format], {
+          ...parameters,
+          timestamp,
+          videocodec: 'jpeg',
+        }),
+      )
+
+      return (
+        <WsRtspCanvas
+          key={refresh}
+          forwardedRef={forwardedRef as Ref<HTMLCanvasElement>}
+          {...{ ws, rtsp, play, offset, onPlaying, onSdp, onRtcp }}
+        />
+      )
+    }
+    case Format.JPEG: {
+      const src = imgUri(
+        secure ? Protocol.HTTPS : Protocol.HTTP,
+        host,
+        searchParams(FORMAT_API[format], {
+          ...parameters,
+          timestamp,
+        }),
+      )
+
+      return (
+        <StillImage
+          key={refresh}
+          forwardedRef={forwardedRef as Ref<HTMLImageElement>}
+          {...{ src, play, onPlaying }}
+        />
+      )
+    }
+    case Format.MP4_H264: {
+      const src = mediaUri(
+        secure ? Protocol.HTTPS : Protocol.HTTP,
+        host,
+        searchParams(FORMAT_API[format], {
+          ...parameters,
+          timestamp,
+          videocodec: 'h264',
+          container: 'mp4',
+        }),
+      )
+
+      return (
+        <HttpMp4Video
+          key={refresh}
+          forwardedRef={forwardedRef as Ref<HTMLVideoElement>}
+          {...{ src, play, onPlaying }}
+        />
+      )
+    }
+
+    default: {
+      const allowedFormats = Object.values(Format).join(', ')
+
+      console.warn(
+        `Error: unknown format: ${format}, please use one of ${allowedFormats}`,
+      )
+
+      return null
+    }
   }
-
-  if (format === Format.RTP_JPEG) {
-    const ws = wsUri(secure ? Protocol.WSS : Protocol.WS, host)
-    const rtsp = rtspUri(
-      host,
-      searchParams(FORMAT_API[format], {
-        ...parameters,
-        timestamp,
-        videocodec: 'jpeg',
-      }),
-    )
-
-    return (
-      <WsRtspCanvas
-        key={refresh}
-        forwardedRef={forwardedRef as Ref<HTMLCanvasElement>}
-        {...{ ws, rtsp, play, offset, onPlaying, onSdp, onRtcp }}
-      />
-    )
-  }
-
-  if (format === Format.JPEG) {
-    const src = imgUri(
-      secure ? Protocol.HTTPS : Protocol.HTTP,
-      host,
-      searchParams(FORMAT_API[format], {
-        ...parameters,
-        timestamp,
-      }),
-    )
-
-    return (
-      <StillImage
-        key={refresh}
-        forwardedRef={forwardedRef as Ref<HTMLImageElement>}
-        {...{ src, play, onPlaying }}
-      />
-    )
-  }
-
-  if (format === Format.MP4_H264) {
-    const src = mediaUri(
-      secure ? Protocol.HTTPS : Protocol.HTTP,
-      host,
-      searchParams(FORMAT_API[format], {
-        ...parameters,
-        timestamp,
-        videocodec: 'h264',
-        container: 'mp4',
-      }),
-    )
-
-    return (
-      <HttpMp4Video
-        key={refresh}
-        forwardedRef={forwardedRef as Ref<HTMLVideoElement>}
-        {...{ src, play, onPlaying }}
-      />
-    )
-  }
-
-  console.warn(`Error: unknown format: ${format},
-please use one of ${[
-    Format.RTP_H264,
-    Format.JPEG,
-    Format.MP4_H264,
-    Format.RTP_JPEG,
-  ].join(', ')}`)
-
-  return null
 }

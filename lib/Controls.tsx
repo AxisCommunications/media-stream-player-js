@@ -82,20 +82,8 @@ const ProgressBarPlayed = styled.div.attrs<{ readonly fraction: number }>(
   width: 100%;
 `
 
-const ProgressBarBuffered = styled.div.attrs<{ readonly fraction: number }>(
-  ({ fraction }) => {
-    return {
-      style: { transform: `scaleX(${fraction})` },
-    }
-  },
-)<{ readonly fraction: number }>`
+const ProgressBarBuffered = styled(ProgressBarPlayed)`
   background-color: rgba(255, 255, 255, 0.2);
-  height: 100%;
-  position: absolute;
-  top: 0;
-  transform: scaleX(0);
-  transform-origin: 0 0;
-  width: 100%;
 `
 
 const ProgressTimestamp = styled.div.attrs<{ readonly left: number }>(
@@ -122,6 +110,19 @@ const ProgressIndicator = styled.div`
   white-space: nowrap;
 `
 
+const formatDuration = (millis: number) =>
+  Duration.fromMillis(millis).toFormat('h:mm:ss')
+
+interface Labels {
+  readonly play?: string
+  readonly pause?: string
+  readonly stop?: string
+  readonly refresh?: string
+  readonly screenshot?: string
+  readonly settings?: string
+  readonly volume?: string
+}
+
 interface ControlsProps {
   readonly play?: boolean
   readonly videoProperties?: VideoProperties
@@ -136,15 +137,7 @@ interface ControlsProps {
   readonly onScreenshot: () => void
   readonly onFormat: (format: Format) => void
   readonly onVapix: (key: string, value: string) => void
-  readonly labels?: {
-    readonly play?: string
-    readonly pause?: string
-    readonly stop?: string
-    readonly refresh?: string
-    readonly screenshot?: string
-    readonly settings?: string
-    readonly volume?: string
-  }
+  readonly labels?: Labels
   readonly showStatsOverlay: boolean
   readonly toggleStats: () => void
   readonly format: Format
@@ -256,9 +249,9 @@ export const Controls: React.FC<ControlsProps> = ({
           : played
       const total = __duration === Infinity ? buffered : __duration
 
-      const counter = `${Duration.fromMillis(played * 1000).toFormat(
-        'h:mm:ss',
-      )} / ${Duration.fromMillis(total * 1000).toFormat('h:mm:ss')}`
+      const counter = `${formatDuration(played * 1000)} / ${formatDuration(
+        total * 1000,
+      )}`
       setProgress({
         playedFraction: played / total,
         bufferedFraction: buffered / total,
@@ -269,13 +262,15 @@ export const Controls: React.FC<ControlsProps> = ({
 
     // Use progress events on media elements
     if (isHTMLMediaElement(el)) {
-      el.addEventListener('ended', updateProgress)
-      el.addEventListener('progress', updateProgress)
-      el.addEventListener('timeupdate', updateProgress)
+      const events = ['ended', 'progress', 'timeupdate']
+
+      events.forEach((ev) => {
+        el.addEventListener(ev, updateProgress)
+      })
       return () => {
-        el.removeEventListener('timeupdate', updateProgress)
-        el.removeEventListener('progress', updateProgress)
-        el.removeEventListener('ended', updateProgress)
+        events.reverse().forEach((ev) => {
+          el.removeEventListener(ev, updateProgress)
+        })
       }
     }
 
@@ -324,7 +319,7 @@ export const Controls: React.FC<ControlsProps> = ({
             ? __mediaTimeline.current.startDateTime
                 .plus(offsetMillis)
                 .toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS)
-            : Duration.fromMillis(offsetMillis).toFormat('h:mm:ss'),
+            : formatDuration(offsetMillis),
       })
     }
 
