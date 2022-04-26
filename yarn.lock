@@ -6156,12 +6156,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-hooks@npm:4.2.0":
-  version: 4.2.0
-  resolution: "eslint-plugin-react-hooks@npm:4.2.0"
+"eslint-plugin-react-hooks@npm:4.5.0":
+  version: 4.5.0
+  resolution: "eslint-plugin-react-hooks@npm:4.5.0"
   peerDependencies:
-    eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
-  checksum: ead5c5be3ded82a0cf295b064376adb1998a43e2262b605eecc0efc88283dec4e159ca39307fafb3d8e661dd08e5a4c8cdfed97eea78f923954f72bad6e20397
+    eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
+  checksum: 0389377de635dd9b769f6f52e2c9e6ab857a0cdfecc3734c95ce81676a752e781bb5c44fd180e01953a03a77278323d90729776438815557b069ceb988ab1f9f
   languageName: node
   linkType: hard
 
@@ -9343,7 +9343,7 @@ fsevents@~2.3.1:
     eslint-plugin-import: 2.24.2
     eslint-plugin-node: 11.1.0
     eslint-plugin-react: 7.25.1
-    eslint-plugin-react-hooks: 4.2.0
+    eslint-plugin-react-hooks: 4.5.0
     file-loader: 6.2.0
     html-webpack-plugin: 5.3.2
     jest: ^27.3.1
