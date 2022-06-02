@@ -7,5 +7,6 @@ export * from './PlaybackArea'
 export * from './Stats'
 export * from './types'
 export * from './utils'
+export * from './Progress'
 
 window.customElements.define('media-stream-player', MediaStreamPlayer)
