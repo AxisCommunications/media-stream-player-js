@@ -155,6 +155,55 @@ where you specify the IP of the camera you want to proxy as the `MSP_CAMERA`
 environment variable (default is `192.168.0.90`). The vite dev server will
 proxy requests to the camera, so that you'll have no CORS issues for any format.
 
+The player component can currently accept these properties.
+
+```ts
+interface PlayerProps {
+  readonly hostname: string
+  readonly vapixParams?: VapixParameters
+  readonly initialFormat?: Format
+  readonly autoPlay?: boolean
+  readonly onSdp?: (msg: Sdp) => void
+  readonly metadataHandler?: MetadataHandler
+  /**
+   * Set to true if the camera requires a secure
+   * connection, "https" and "wss" protocols.
+   */
+  readonly secure?: boolean
+  readonly className?: string
+  /**
+   * When playing a recording, the time the video started
+   * (used for labeling with an absolute time) formatted
+   * as an ISO time, e.g.: 2021-02-03T12:21:57.465715Z
+   */
+  readonly startTime?: string
+  /**
+   * When playing a recording, the total duration of the video
+   * if known by the user (and not reported from backend) in
+   * seconds.
+   */
+  readonly duration?: number
+
+  /**
+   * Activate automatic retries on RTSP errors.
+   */
+  readonly autoRetry?: boolean
+}
+```
+
+React example
+
+```jsx
+<Player
+  hostname="192.168.0.90"
+  format="RTP_H264"
+  vapixParams={{ resolution: '1920x1080' }}
+  secure
+  autoPlay
+  autoRetry
+/>
+```
+
 ## FAQ
 
 **Does this library support audio?**
