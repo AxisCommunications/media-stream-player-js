@@ -6131,7 +6131,7 @@ __metadata:
     typescript: 4.7.4
     vite: 3.0.9
   peerDependencies:
-    luxon: ^2.4.0
+    luxon: ^2.4.0 || ^3.0.0
     media-stream-library: ^11.1.1
     react: ^17.0.2 || ^18.1.0
     react-dom: ^17.0.2 || ^18.1.0
