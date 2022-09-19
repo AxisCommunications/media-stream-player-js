@@ -89,8 +89,14 @@ interface PlaybackAreaProps {
   readonly autoRetry?: boolean
 }
 
-const wsUri = (protocol: Protocol.WS | Protocol.WSS, host: string) => {
-  return host.length !== 0 ? `${protocol}//${host}/rtsp-over-websocket` : ''
+const wsUri = (
+  protocol: Protocol.WS | Protocol.WSS,
+  host: string,
+  searchParams: string,
+) => {
+  return host.length !== 0
+    ? `${protocol}//${host}/rtsp-over-websocket?${searchParams}`
+    : ''
 }
 
 const rtspUri = (host: string, searchParams: string) => {
@@ -236,7 +242,13 @@ export const PlaybackArea: React.FC<PlaybackAreaProps> = ({
   const timestamp = refresh.toString()
 
   if (format === Format.RTP_H264) {
-    const ws = wsUri(secure ? Protocol.WSS : Protocol.WS, host)
+    const ws = wsUri(
+      secure ? Protocol.WSS : Protocol.WS,
+      host,
+      searchParams(FORMAT_API[format], {
+        ...parameters,
+      }),
+    )
     const rtsp = rtspUri(
       host,
       searchParams(FORMAT_API[format], {
@@ -267,7 +279,13 @@ export const PlaybackArea: React.FC<PlaybackAreaProps> = ({
   }
 
   if (format === Format.RTP_JPEG) {
-    const ws = wsUri(secure ? Protocol.WSS : Protocol.WS, host)
+    const ws = wsUri(
+      secure ? Protocol.WSS : Protocol.WS,
+      host,
+      searchParams(FORMAT_API[format], {
+        ...parameters,
+      }),
+    )
     const rtsp = rtspUri(
       host,
       searchParams(FORMAT_API[format], {
