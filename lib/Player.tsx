@@ -40,7 +40,6 @@ interface PlayerProps {
    * connection, "https" and "wss" protocols.
    */
   readonly secure?: boolean
-  readonly aspectRatio?: number
   readonly className?: string
   /**
    * When playing a recording, the time the video started
